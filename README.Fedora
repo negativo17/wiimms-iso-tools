@@ -1,0 +1,50 @@
+# Format a drive:
+wwt format -v -f /dev/sdc2
+
+# Extract all wdf
+wit extract *.wdf -D destdir/%Y
+
+# Extract all iso images in all format (=ISO+CISO+DF+WBFS+FST)
+# ('.' means current directory)
+wit extract . -D destdir/%Y
+
+# Same, but search current directory recursivley
+wit extract -r . -D destdir/%Y
+
+# btw: wit can extract directly from wbfs
+wit extract /dev/wbfs_drive -D destdir/%Y
+# or a single disc with known id
+wit extract /dev/wbfs_drive id6 -D destdir/%Y
+
+# Convert an iso into a wbfs file
+wit copy --source game.iso --wbfs -d game.wbfs -v
+
+# List games
+wwt LIST-L /dev/sdb2
+
+# Check
+wwt CHECK -v /dev/sdb2
+
+# Remove disc
+wwt -t -v -P remove id6 -p /dev/sdb2
+
+# Add all games from one partition to the other. Copies only missing.
+wwt add -v -P -u --source /dev/sdc1 -p /dev/sdb2
+
+# Add one single game from one partition to the other
+wwt add -v -P -u -n SARE4Z --source /dev/sdc1 -p /dev/sdb2
+
+# Downlod titles from gametdb.com
+wwt gettitles
+
+# Rename all games in a partition according to downloaded titles.txt file (English)
+wwt SETTITLE -p /dev/sdb2 +=%T
+
+# Rename all games in a partition according to downloaded titles-it.txt file (Italian)
+wwt SETTITLE -p /dev/sdb2 -T /var/lib/wit/titles-it.txt +=%T
+wwt SETTITLE -p /dev/sdb2 --lang it +=%T
+
+# Change titles of ISO files in the given directory
+wit settitle source_dir +=%T
+
+# WINDOWS: It is easer to say -E$ and use $T instead of %T
