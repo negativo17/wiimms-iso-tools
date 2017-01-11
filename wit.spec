@@ -1,7 +1,7 @@
-%global revision 6005
+%global revision 7331
 
 Name:           wit
-Version:        2.31a
+Version:        2.40a
 Release:        1%{?dist}
 Summary:        Tools for manipulating Wii/Gamecube games
 
@@ -58,6 +58,9 @@ install -p -m 755 load-titles.sh %{buildroot}%{_sharedstatedir}/wit
 %{_sharedstatedir}/wit
 
 %changelog
+* Wed Jan 11 2017 Simone Caronni <negativo17@gmail.com> - 2.40a-1
+- Update to latest 2.40a.
+
 * Fri Jan 08 2016 Simone Caronni <negativo17@gmail.com> - 2.31a-1
 - Update to 2.31a.
 
