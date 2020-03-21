@@ -13,6 +13,7 @@ Patch0:         %{name}-cflags.patch
 
 #BuildRequires:  bzip2-devel
 BuildRequires:  fuse-devel
+BuildRequires:  gcc
 BuildRequires:  ncurses-devel
 
 %description
