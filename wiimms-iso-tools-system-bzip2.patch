@@ -1,0 +1,84 @@
+diff -Naur wiimms-iso-tools.source-3.02a.old/Makefile wiimms-iso-tools.source-3.02a/Makefile
+--- wiimms-iso-tools.source-3.02a.old/Makefile	2020-03-21 10:44:06.671802696 +0100
++++ wiimms-iso-tools.source-3.02a/Makefile	2020-03-21 10:48:08.441191086 +0100
+@@ -186,27 +186,20 @@
+ #-------------------------------------------------------------------------------
+ # sub libs
+ 
+-# libbz2 & lzma
+-LIBBZ2_SRC	= $(shell echo src/libbz2/*.c)
+-LIBBZ2_OBJ	= $(patsubst %.c,%.o,$(LIBBZ2_SRC))
+-
+ LZMA_SRC	= $(shell echo src/lzma/*.c)
+ LZMA_OBJ	= $(patsubst %.c,%.o,$(LZMA_SRC))
+ 
+ ifeq ($(SYSTEM),cygwin)
+   LZMA_FLAGS	= -Wno-unused-but-set-variable
+-  BZIP2_FLAGS	= -Wno-maybe-uninitialized
+ else ifeq ($(SYSTEM),mac)
+   LZMA_FLAGS	= 
+-  BZIP2_FLAGS	= 
+ else
+   LZMA_FLAGS	= -Wno-unused-but-set-variable
+-  BZIP2_FLAGS	= -Wno-maybe-uninitialized
+ endif
+ 
+ # lib summary
+-LIB_LIST	+= libbz2 lzma
+-LIB_OBJECTS	+= $(LIBBZ2_OBJ) $(LZMA_OBJ)
++LIB_LIST	+= lzma
++LIB_OBJECTS	+= $(LZMA_OBJ)
+ RM_FILES	+= $(foreach l,$(LIB_LIST),src/$(l)/*.{d,o})
+ 
+ 
+@@ -246,7 +239,7 @@
+ 
+ # other objects
+ WIT_O		:= lib-std.o lib-file.o lib-sf.o \
+-		   lib-bzip2.o lib-lzma.o \
++		   lib-lzma.o \
+ 		   lib-wdf.o lib-wia.o lib-ciso.o lib-gcz.o \
+ 		   iso-interface.o wbfs-interface.o patch.o \
+ 		   titles.o match-pattern.o dclib-utf8.o \
+@@ -313,7 +306,7 @@
+ ifeq ($(HAVE_ZLIB),1)
+  LIBS		+= -lz
+ endif
+-LIBS		+= -lm -lncurses $(XLIBS)
++LIBS		+= -lbz2 -lm -lncurses $(XLIBS)
+ 
+ DISTRIB_RM	= ./wit-v$(VERSION)-r
+ DISTRIB_BASE	= wit-v$(VERSION)-r$(REVISION_NEXT)
+@@ -435,10 +428,6 @@
+ ###############################################################################
+ # lib specific rules
+ 
+-$(LIBBZ2_OBJ): %.o: %.c Makefile
+-	@printf "$(LOGFORMAT_CC)" object "$(subst src/libbz2/,,$@)" "$(MODE) [libbz2]"
+-	@$(CC) $(CFLAGS) $(DEPFLAGS) $(BZIP2_FLAGS) $(DEFINES) -c $< -o $@
+-
+ $(LZMA_OBJ): %.o: %.c Makefile
+ 	@printf "$(LOGFORMAT_CC)" object "$(subst src/lzma/,,$@)" "$(MODE) [lzma]"
+ 	@$(CC) $(CFLAGS) $(DEPFLAGS) $(LZMA_FLAGS) $(DEFINES) -c $< -o $@
+@@ -657,8 +646,6 @@
+ 	@echo  ""
+ 	@echo  "LIBS: $(LIBS)"
+ 	@echo  ""
+-	@echo  "LIBBZ2_OBJ: $(LIBBZ2_OBJ)"
+-	@echo  ""
+ 	@echo  "LZMA_OBJ: $(LZMA_OBJ)"
+ 	@echo  ""
+ 	@echo  "C_OBJECTS: $(C_OBJECTS)"
+diff -Naur wiimms-iso-tools.source-3.02a.old/src/lib-bzip2.c wiimms-iso-tools.source-3.02a/src/lib-bzip2.c
+--- wiimms-iso-tools.source-3.02a.old/src/lib-bzip2.c	2020-03-21 10:27:58.395986651 +0100
++++ wiimms-iso-tools.source-3.02a/src/lib-bzip2.c	2020-03-21 10:49:33.002751601 +0100
+@@ -40,8 +40,7 @@
+   #ifndef NO_BZIP2
+ /******************/
+ 
+-//#include <bzlib.h>
+-#include "libbz2/bzlib.h"
++#include <bzlib.h>
+ #include "lib-bzip2.h"
+ 
+ /************************************************************************
