@@ -1,3 +1,5 @@
+%define _legacy_common_support 1
+
 Name:           wiimms-iso-tools
 Version:        3.02a
 Release:        1%{?dist}
