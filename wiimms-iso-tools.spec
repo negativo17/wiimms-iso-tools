@@ -30,7 +30,10 @@ cp %{SOURCE1} .
 #rm -fr src/libbz2
 
 %build
-%make_build INSTALL_PATH=%{_prefix} all
+%make_build \
+  INSTALL_PATH=%{_prefix} \
+  SHARE_PATH=%{_sharedstatedir}/wit \
+  all
 
 %install
 mkdir -p %{buildroot}%{_sharedstatedir}/wit
@@ -41,7 +44,7 @@ ln -sf wdf %{buildroot}%{_bindir}/wdf-cat
 ln -sf wdf %{buildroot}%{_bindir}/wdf-dump
 
 install -p -m 644 share/*.txt %{buildroot}%{_sharedstatedir}/wit
-install -p -m 755 setup/load-titles.sh %{buildroot}%{_sharedstatedir}/wit
+install -p -m 755 load-titles.sh %{buildroot}%{_sharedstatedir}/wit
 
 %files
 %doc README.Fedora
